@@ -36,10 +36,10 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
-      // Menonaktifkan pemeriksaan 'no-unused-vars'
-      'no-unused-vars': 'off',  
-      // Menonaktifkan pemeriksaan dependensi pada useEffect
-      'react-hooks/exhaustive-deps': 'off',  
+      'no-unused-vars': 'off',
+      'react-hooks/exhaustive-deps': 'off',
+      // Menonaktifkan aturan prop-types
+      'react/prop-types': 'off',  
     },
   },
 ];
