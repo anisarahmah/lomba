@@ -1,18 +1,45 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger: none
 
 pool:
-  vmImage: ubuntu-latest
+  name: linux
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+stages:
+# Stage untuk Code Quality (ESLint, SonarQube)
+- stage: CodeQuality
+  jobs:
+    - job: CodeQualityCheck
+      steps:
+      # Checkout code dari repository GitHub
+      - checkout: self
+        persistCredentials: true
+        fetchDepth: 1
+        clean: true
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+      # Setup Node.js
+      - task: NodeTool@0
+        displayName: 'Install Node.js'
+        inputs:
+          versionSpec: '20.x'
+
+      # Install dependencies
+      - script: |
+          npm install
+        displayName: 'Install Dependencies'
+
+      # Install dependencies
+      - script: |
+          npm audit
+        displayName: 'Install Dependencies'
+
+      # Linting dengan fix
+      - script: |
+          - script: |
+          npx eslint --config client/eslint.config.js client --fix --format json -o eslint-report.json
+        displayName: 'Run ESLint with Fix and Report'
+      
+      # Publish report
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: 'eslint-report.json'
+          ArtifactName: 'ESLint Report'
+        displayName: 'Publish ESLint Report'
