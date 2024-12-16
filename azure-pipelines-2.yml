@@ -1,20 +1,45 @@
-# Node.js
-# Build a general Node.js project with npm.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
-
 trigger: none
 
 pool:
-  name: linux
+  name: Default  # Atau gunakan agen yang telah disiapkan jika menggunakan agen lokal
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '20.x'
-  displayName: 'Install Node.js'
+stages:
+  - stage: Build
+    jobs:
+      - job: Build_Client
+        displayName: 'Build Client'
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '20.x'
+          - script: |
+              cd client
+              npm install
+              npm run build  # Pastikan ada script "build" di client/package.json
+            displayName: 'Install and Build Client'
+          
+          # Publish Client Build Output to Artifact
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathToPublish: 'client/build'  # Pastikan direktori build ada
+              artifactName: 'client-artifact'  # Nama artefak yang akan dipublish
+              publishLocation: 'Container'
 
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install and build'
+      - job: Build_Server
+        displayName: 'Build Server'
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '20.x'
+          - script: |
+              cd server
+              npm install
+              npm run build  # Pastikan ada script "build" di server/package.json
+            displayName: 'Install and Build Server'
+
+          # Publish Server Build Output to Artifact
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathToPublish: 'server/build'  # Pastikan direktori build ada
+              artifactName: 'server-artifact'  # Nama artefak yang akan dipublish
+              publishLocation: 'Container'
