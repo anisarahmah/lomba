@@ -33,7 +33,9 @@ stages:
 
       # Linting dengan fix
       - script: |
-          npx eslint . --fix
+          npm install eslint --save-dev
+          npx eslint --init
+          npx eslint . --fix --format json -o eslint-report.json
         displayName: 'Run ESLint with Fix and Report'
       
       # Publish report
