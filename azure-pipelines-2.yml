@@ -35,6 +35,7 @@ stages:
               cd server
               npm install
               npm run build  # Pastikan ada script "build" di server/package.json
+              ls -alh build
             displayName: 'Install and Build Server'
 
           # Publish Server Build Output to Artifact
